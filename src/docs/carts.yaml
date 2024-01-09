@@ -1,0 +1,88 @@
+paths:
+  /carts:
+    get:
+      summary: Obtiene carros de compras
+      tags: 
+        - carts
+      responses:
+        "200":
+          description: "Datos obtenidos de forma satisfactoria"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './src/docs/carts-schema.yaml'
+        "500":
+          description: "Error interno del servidor"
+    post:
+      post:
+      summary: Ingresa un carrito
+      tags:
+        - carts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: array
+                    properties:
+                      productId:
+                        type: string
+                        description: Id del producto
+                  description: Arreglo de productos en el carrito
+              required:
+                - products
+      responses:
+        "200":
+          description: "Carrito creado de forma satisfactoria"
+        "500":
+          description: "Error interno del servidor"
+  /carts/cid/purchase:
+    post:
+      summary: Realiza la compra del carrito
+      tags:
+        - carts
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: Id del carrito que se comprará
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productos:
+                  type: array
+                    properties:
+                      description:
+                        type: string
+                        description: Descripción producto
+                      price:
+                        type: number
+                        description: Precio del producto
+                      stock:
+                        type: integer
+                        description: Stock disponible del producto
+                  description: Productos a comprar
+                correo:
+                  type: string
+                  description: Correo electrónico 
+              required:
+                - productos
+                - correo
+      responses:
+        "200":
+          description: "Compra realizada de forma correcta. Se realizó la creación del ticket."
+        "300":
+          description: "No hay suficiente stock"
+        "500":
+          description: "Error interno al procesar la compra"

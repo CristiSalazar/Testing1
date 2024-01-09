@@ -1,0 +1,50 @@
+paths:
+  /products:
+    get:
+      summary: Obtiene los productos
+      tags: 
+        - products
+      responses:
+        "200":
+          description: "Datos obtenidos de forma satisfactoria"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './src/docs/products-schema.yaml'
+        "500":
+          description: "Error interno del servidor"
+    post:
+      summary: Ingresa un producto
+      tags:
+        - products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  description: Descripcion de producto
+                price:
+                  type: number
+                  description: Precio producto
+                stock:
+                  type: number
+                  description: Stock producto
+                owner:
+                  type: string
+                  description: Propietario producto
+              required:
+                - description
+                - price
+                - stock
+                - owner
+      responses:
+        "200":
+          description: "Producto creado correctamente"
+        "500":
+          description: "Error interno del servidor"
