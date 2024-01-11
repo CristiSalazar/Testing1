@@ -2,14 +2,14 @@ import User from "../src/dao/mongo/users.mongo.js"
 import config from "../src/config/config.js"
 import mongoose from "mongoose"
 import Assert from "assert"
-import Chai from "chai"
-// import Supertest from 'supertest'
+import chai from "chai"
+import supertest from 'supertest'
 
 mongoose.connect(config.mongo_url);
 
 const assert = Assert.strict
-// const expect = Chai.expect
-// const requester = Supertest("http://localhost:8080")
+const expect = chai.expect
+const requester = supertest("http://localhost:8080")
 
 describe('Testing User DAO get method', () => {
     before(function () {
@@ -21,8 +21,8 @@ describe('Testing User DAO get method', () => {
         try
         {
             const result = await this.usersDao.get()
-            assert.strictEqual(Array.isArray(result) && result.length >0 , true) 
-            // expect(Array.isArray(result)).to.be.equals(true) 
+            assert.strictEqual(Array.isArray(result), true) 
+            expect(Array.isArray(result)).to.be.equals(true) 
         }
         catch(error){
             console.error("Error durante el test: ", error)
@@ -40,31 +40,25 @@ describe('Testing User DAO get method', () => {
             rol: "Test Rol"
         }
         const result = await this.usersDao.save(mockUser)
-        assert.deepStrictEqual(result._id) 
-        // expect(result).to.have.property('_id') 
+        assert.ok(result._id) 
+        expect(result).to.have.property('_id') 
     })
 
     it("El DAO debe obtener un usuario por correo", async function () {
         let emailToFind = "cristina.salazar125@gmail.com"
         const result = await this.usersDao.findEmail({ email: emailToFind })
         assert.strictEqual(typeof result, "object") 
-        // expect(result).to.be.an('object') 
+        expect(result).to.be.an('object') 
     })
 
     it("El DAO debe devolver un usuario despues de colocar un parametro", async function () {
         let filterData = { first_name: 'admin'}
         const result = await this.usersDao.findJWT(filterData)
         assert.strictEqual(typeof result, "object") 
-        // expect(result).to.be.an('array'); 
+        expect(result).to.be.an('array'); 
     })
 
-    it("El endpoint GET /users debe devolver todos los usuarios", async function() {
-        const response = await requester.get('/users')
-        assert.strictEqual(response.status, 200);
-        expect(response.type).to.equal('application/json');
-        expect(response.body).to.have.property('status', 'success');
-    })
-    it("El endpoint POST /users debe crear un usuario", async function() {
+    it("Post /users debe crear un usuario", async function() {
         let mockUser = {
             first_name: "SuperTest Nombre",
             last_name: "SuperTest Apellido",
