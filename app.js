@@ -263,8 +263,7 @@ app.post('/forgot-password', async (req, res) => {
     }
 
     const token = generateAndSetTokenEmail(email)
-  
-    // Restablecimiento de contraseña
+ 
     const resetLink = `http://localhost:8080/reset-password?token=${token}`;
   
     let result = transport.sendMail({

@@ -3,6 +3,8 @@ import { fileURLToPath } from "url"
 import passport from "passport"
 import nodemailer from 'nodemailer'
 import {faker} from "@faker-js/faker"
+import multer from "multer"
+
 
 export const passportCall = (strategy) => {
     return async(req, res, next)=>{
@@ -32,10 +34,9 @@ export const transport= nodemailer.createTransport({
     }
 })
 
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
-//Mock
 
 faker.location = "es"
 
@@ -50,5 +51,36 @@ export const generateProduct = () => {
         price: faker.commerce.price({ min: 100, max: 200 }),
     }
 }
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      const fileType = file.fieldname;
+      let uploadPath = 'public/files/';
+  
+      switch (fileType) {
+        case 'profiles':
+          uploadPath += 'profiles/';
+          break;
+        case 'products':
+          uploadPath += 'products/';
+          break;
+        case 'documents':
+          uploadPath += 'documents/';
+          break;
+        case 'identificacion':
+          uploadPath += 'documents/';
+          break;
+       case 'comprobanteDomicilio':
+          uploadPath += 'documents/';
+          break;
+       case 'comprobanteEstadoCuenta':
+          uploadPath += 'documents/';
+          break;
+      }
+    },
+  });
+  export const uploader = multer({ storage: storage });
+  
+
 
 export default __dirname
