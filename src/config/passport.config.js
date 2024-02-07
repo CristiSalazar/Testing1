@@ -2,9 +2,10 @@ import passport from "passport"
 import local from "passport-local"
 import jwt from "passport-jwt"
 
-const LocalStrategy = local.Strategy
+const localStrategy = local.Strategy
 const JwtStrategy = jwt.Strategy
 const ExtractJwt = jwt.ExtractJwt
+
 const cookieExtractor = req =>{
     let token = null
     if(req && req.cookies){
@@ -12,6 +13,7 @@ const cookieExtractor = req =>{
     }
     return token
 }
+
 const initializePassport = () => {
     passport.use('jwt', new JwtStrategy({
         jwtFromRequest:ExtractJwt.fromExtractors([cookieExtractor]),
@@ -26,5 +28,3 @@ const initializePassport = () => {
     }
     ))
 }
-
-export default initializePassport

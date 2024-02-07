@@ -11,7 +11,7 @@ import UserMongo from "./src/dao/mongo/users.mongo.js"
 import ProdMongo from "./src/dao/mongo/products.mongo.js"
 import { Strategy as JwtStrategy } from 'passport-jwt';
 import { ExtractJwt as ExtractJwt } from 'passport-jwt';
-import __dirname, { authorization, passportCall, transport } from "./utils.js"
+import __dirname, { authorization, passportCall, transport, createHash } from "./utils.js"
 import initializePassport from "./src/config/passport.config.js"
 import * as path from "path"
 import {generateAndSetToken, generateAndSetTokenEmail, validateTokenResetPass, getEmailFromToken, getEmailFromTokenLogin} from "./src/jwt/token.js"
@@ -21,6 +21,10 @@ import {Server} from "socket.io"
 import compression from 'express-compression'
 import { nanoid } from 'nanoid'
 import loggerMiddleware from "./logger.Middleware.js"
+import bodyParser from "body-parser"
+
+const app = express()
+const port = 8080
 
 //logger
 app.use(loggerMiddleware)
@@ -34,9 +38,6 @@ app.get("/", function(req,res){
     req.logger.debug("Mensaje de debug")
     res.send("logs realizados")
 })
-
-const app = express()
-const port = 8080
 
 const users = new UserMongo()
 const products = new ProdMongo()
@@ -62,6 +63,7 @@ mongoose.connect(config.mongo_url, {
     useUnifiedTopology: true,
 });
 
+//listo
 const jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: "Secret-key"
@@ -78,12 +80,18 @@ passport.use(
     })
 )
 
-
+//middlewares
 app.use(express.json())
-app.use(express.static(path.join(__dirname, 'public')))
+
+
 app.engine("handlebars", engine())
 app.set("view engine", "handlebars")
 app.set("views", path.resolve(__dirname + "/views"))
+app.use(express.static(path.join(__dirname, 'public')))
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(cookieParser())
 app.use(compression())
 initializePassport()
@@ -154,26 +162,25 @@ socketServer.on("connection", socket => {
     });
 })
 
-app.use("/carts", cartsRouter)
+// Rutas
+app.use("/carts", cartsRouter) 
 app.use("/products", productsRouter)
 app.use("/users", usersRouter)
 app.use("/tickets", ticketsRouter)
 
+// Ruta de autenticación con JWT 
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const emailToFind = email;
     const user = await users.findEmail({ email: emailToFind });
-    if (!user) {
+    if (!user || user.password !== password) {
       return res.status(401).json({ message: "Error de autenticación" });
     }
     try {
-        const passwordMatch = isValidPassword(user, password);
-
-        if (!passwordMatch) {
+        if (!isValidPassword(user, password)) {
             req.logger.error("Error de autenticación: Contraseña incorrecta");
             return res.status(401).json({ message: "Error de autenticación" });
         }
-
         const token = generateAndSetToken(res, email, password); 
         const userDTO = new UserDTO(user);
         const prodAll = await products.get();
@@ -194,13 +201,13 @@ app.post("/api/register", async(req,res)=>{
         req.logger.warn("Correo electrónico ya existe: " + emailToFind);
         return res.send({ status: "error", error: "Usuario ya existe" })
     }
-    
+
     const newUser = {
         first_name,
         last_name,
         email,
         age,
-        password,
+        password: createHash(password),
         rol
     }
     try {

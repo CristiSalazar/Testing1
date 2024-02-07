@@ -1,9 +1,12 @@
+// Finalizado
+
 import mongoose from "mongoose";
 import config from '../config/config.js'
 export let Carts
 export let Products
 export let Users
 export let Tickets
+
 switch (config.persistence) {
     case "MONGO":
         const connection = mongoose.connect(config.mongo_url)
@@ -16,6 +19,7 @@ switch (config.persistence) {
         Users = UsersMongo
         Tickets = TicketsMongo
         break;
+
     case "MEMORY":
         const { default: CartsMemory } = await import("./memory/carts.memory.js")
         const { default: ProductsMemory } = await import("./memory/products.memory.js")
@@ -26,6 +30,7 @@ switch (config.persistence) {
         Users = UsersMemory
         Tickets = TicketsMemory
         break
+        
     default:
 
 }

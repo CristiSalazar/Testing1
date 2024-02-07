@@ -1,3 +1,5 @@
+// Finalizado
+
 export default class Carts {
     constructor() {
         this.data = []

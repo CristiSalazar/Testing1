@@ -16,17 +16,17 @@ router.get("/", async (req, res) => {
 })
 
 router.post("/", async (req, res) => {
-    let { description, price, stock} = req.body
-    const product = { description, price, stock}
-    if (!description || !price || !stock) {
+    let { description, price, stock, quantity} = req.body
+    const product = { description, price, stock, quantity}
+    if (!description || !price || !stock || !quantity) {
         CustomError.createError({
             name:"Error de creación del producto",
-            cause:generateProductErrorInfo({description,price,stock}),
+            cause:generateProductErrorInfo({description,price,stock, quantity}),
             message:"Error al intentar crear producto",
             code: EErrors.INVALID_TYPES_ERROR 
         })
     }
-    let prod = new ProductDTO({ description, price, stock})
+    let prod = new ProductDTO({ description, price, stock, quantity})
     let result = await productService.createProduct(prod)
 })
 

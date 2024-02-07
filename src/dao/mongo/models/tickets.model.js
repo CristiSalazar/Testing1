@@ -1,3 +1,5 @@
+// finalizadi
+
 import mongoose from "mongoose"
 
 const ticketsCollection = "ticket";

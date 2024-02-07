@@ -4,7 +4,13 @@ import passport from "passport"
 import nodemailer from 'nodemailer'
 import {faker} from "@faker-js/faker"
 import multer from "multer"
+import bcrypt from "bcrypt"
 
+export const createHash = async password => {
+  return await bcrypt.hash(password, bcrypt.genSalt(10))
+}
+
+export const isValidPassword = (user,password) => bcrypt.compareSync(password, user.password)
 
 export const passportCall = (strategy) => {
     return async(req, res, next)=>{
@@ -44,7 +50,7 @@ export const generateProduct = () => {
     let numOfProducts = 100
     let products = []
     for (let i = 0; i < numOfProducts; i++){
-        products.push(generateProducts)
+        products.push(generateProduct)
     }
     return {
         description:faker.commerce.productDescription(),

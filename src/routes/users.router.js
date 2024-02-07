@@ -2,17 +2,24 @@ import { Router } from "express";
 import UserDTO from "../dao/DTOs/user.dto.js";
 import { userService } from "../repositories/index.js";
 import Users from "../dao/mongo/users.mongo.js"
+import uploader from "../../utils.js"
 
 const router = Router()
 
 const usersMongo = new Users()
 
+// Get
 router.get("/", async (req, res) => {
+  try{
     req.logger.info('Usuarios cargados');
     let result = await usersMongo.get()
     res.send({ status: "success", payload: result })
-})
+  } catch(error){
+    console.log(error)
+  }
+}) 
 
+// Post
 router.post("/", async (req, res) => {
     let { first_name, last_name, email, age, password, rol } = req.body
     let user = new UserDTO({ first_name, last_name, email, age, password, rol })
@@ -24,6 +31,7 @@ router.post("/", async (req, res) => {
     } 
 })
 
+//p
 router.post("/premium/:uid", async (req, res) => {
     try {
       const { rol } = req.body;

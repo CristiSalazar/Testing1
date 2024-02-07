@@ -1,3 +1,5 @@
+// Finalizado
+
 import UserDTO from "../dao/DTOs/user.dto.js";
 
 export default class UserRepository {
@@ -6,7 +8,7 @@ export default class UserRepository {
     }
 
     getUsers = async () => {
-        let result = await this.dao.get()
+        let result = await this.dao.get() 
         return result
     }
 

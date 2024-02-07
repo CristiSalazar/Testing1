@@ -1,3 +1,5 @@
+//Finalizado
+
 export default class ProductDTO {
     constructor(product) {
         this.description = product.description
