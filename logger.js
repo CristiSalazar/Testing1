@@ -1,4 +1,6 @@
-import winston from "winston/lib/winston/transports"
+// listo
+
+import winston from "winston"
 
 const devLogger = winston.createLogger({
     level: "debug",
