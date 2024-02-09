@@ -32,11 +32,11 @@ describe('Testing User DAO get method', () => {
 
     it("El DAO debe agregar a un usuario en la DB", async function () {
         let mockUser = {
-            first_name: "Test Nombre",
-            last_name: "Test Apellido",
-            email: "Test Email",
+            first_name: "Javier",
+            last_name: "Perez",
+            email: "jperez@gmail.com",
             age: 22,
-            password: "Test Contraseña",
+            password: "123456",
             rol: "Test Rol"
         }
         const result = await this.usersDao.save(mockUser)
@@ -44,7 +44,7 @@ describe('Testing User DAO get method', () => {
         expect(result).to.have.property('_id') 
     })
 
-    it("El DAO debe obtener un usuario por correo", async function () {
+    it("El DAO debe obtener un usuario por correo electrónico", async function () {
         let emailToFind = "cristina.salazar125@gmail.com"
         const result = await this.usersDao.findEmail({ email: emailToFind })
         assert.strictEqual(typeof result, "object") 

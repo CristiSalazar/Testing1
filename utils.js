@@ -56,7 +56,7 @@ export const generateProduct = () => {
         description:faker.commerce.productDescription(),
         price: faker.commerce.price({ min: 100, max: 200 }),
     }
-}
+} 
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {

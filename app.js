@@ -22,7 +22,9 @@ import compression from 'express-compression'
 import { nanoid } from 'nanoid'
 import loggerMiddleware from "./logger.Middleware.js"
 import bodyParser from "body-parser"
-
+import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerUiExpress from 'swagger-ui-express'
+ 
 const app = express()
 const port = 8080
 
@@ -47,7 +49,7 @@ const swaggerOptions = {
         openapi:'3.0.1',
         info:{
             title: 'Documentación de Api',
-            description:'Documentación con Swagger'
+            description:'Api clase Swagger' 
         }
     },
     apis:[`src/docs/users.yaml`,
@@ -55,7 +57,7 @@ const swaggerOptions = {
           `src/docs/tickets.yaml`,
           `src/docs/carts.yaml`]
 }
-const specs = swaggerJsdoc(swaggerOptions)
+const specs = swaggerJSDoc(swaggerOptions)
 app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 mongoose.connect(config.mongo_url, {
