@@ -1,7 +1,5 @@
-import winston from "winston/lib/winston/config"
+import winston from "winston"
 import logger from "./logger.js"
-
-const logger = require("./logger")
 
 const loggerMiddleware = function(req,res,next){
     req.logger = logger
