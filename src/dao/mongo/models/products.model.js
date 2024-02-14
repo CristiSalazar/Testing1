@@ -1,5 +1,3 @@
-// Finalizado
-
 import mongoose from "mongoose"
 
 const productsCollection = "products";
@@ -9,6 +7,7 @@ const productsSchema = new mongoose.Schema({
     price: { type: Number},
     stock: { type: Number},
     quantity: { type: String, enum: ["inStock", "outOfStock"]},
+    owner: {type: String}
 })
 
 const productsModel = mongoose.model(productsCollection, productsSchema)

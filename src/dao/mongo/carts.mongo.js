@@ -1,5 +1,6 @@
 import cartsModel from './models/carts.model'
-import productsModel from './models/products.model.js'
+import productsModel from './models/products.model'
+import mongoose from 'mongoose'
 
 export default class Carts {
     constructor() {
@@ -10,6 +11,7 @@ export default class Carts {
         let carts = await cartsModel.find()
         return carts
     }
+
     getCartById = async (id_cart) => {
         try {
             const cart = await cartsModel.findById(id_cart);
@@ -38,7 +40,8 @@ export default class Carts {
     
                 if (productInCollection.stock >= producto.stock) {
                     await productsModel.updateOne(
-                        { description: productInCollection.description }
+                        { description: productInCollection.description },
+                        { $inc: { stock: -producto.stock } }
                     )
                 } else {
                     errors.push({ description: producto.description, error: 'Insuficiente' });
@@ -53,6 +56,7 @@ export default class Carts {
             return stockInfo;
         } catch (error) {
             console.error("Error al obtener el stock:", error);
+            return { error: "Error al obtener stock" };
         }
     };
     getAmount = async ({ productos }) => {
@@ -70,14 +74,14 @@ export default class Carts {
     
             return totalAmount;
         } catch (error) {
-            console.error("Error al calcular el monto:", error);
-            return 0; 
+            console.error("Error de cálculo", error);
+            return null; 
         }
     };
     
     addCart = async (cart) => {
         let result = await cartsModel.create(cart)
-        return result
         console.log("Carro creado correctamente")
+        return result
     }
 }

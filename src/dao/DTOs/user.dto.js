@@ -1,5 +1,3 @@
-//Finalizado
-
 export default class UserDTO {
     constructor(user) {
         this.first_name = user.first_name

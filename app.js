@@ -26,7 +26,7 @@ import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUiExpress from 'swagger-ui-express'
  
 const app = express()
-const port = 8080
+const port = process.env.PORT || 8080
 
 //logger
 app.use(loggerMiddleware)
@@ -60,7 +60,7 @@ const swaggerOptions = {
 const specs = swaggerJSDoc(swaggerOptions)
 app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
-mongoose.connect(config.mongo_url, {
+mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });

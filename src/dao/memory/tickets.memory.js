@@ -1,4 +1,3 @@
-// Finalizado
 export default class Tickets {
     constructor() {
         this.data = []

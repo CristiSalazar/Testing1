@@ -1,5 +1,3 @@
-//Finalizado
-
 import {nanoid} from "nanoid"
 export default class TicketDTO {
     constructor(ticket) {
@@ -7,5 +5,6 @@ export default class TicketDTO {
         this.purchase_datetime = new Date()
         this.amount = ticket.amount
         this.purchaser = ticket.purchaser
+        this.id_ticket = ticket.id_ticket
     }
 }

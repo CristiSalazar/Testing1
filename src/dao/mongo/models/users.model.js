@@ -1,5 +1,3 @@
-// Finalizado
-
 import mongoose from "mongoose"
 
 const usersCollection = "users";
@@ -17,7 +15,8 @@ const userSchema = new mongoose.Schema({
           name: { type: String},
           reference: { type: String},
         }
-    ]
+    ],
+    last_conection: Date
 })
 
 const usersModel = mongoose.model(usersCollection, userSchema)

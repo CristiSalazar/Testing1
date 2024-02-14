@@ -1,4 +1,3 @@
-// Finalizado
 export default class Products {
     constructor() {
         this.data = []

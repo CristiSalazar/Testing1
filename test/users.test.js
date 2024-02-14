@@ -67,7 +67,6 @@ describe('Testing User DAO get method', () => {
             password: "SuperTest Contraseña",
             rol: "SuperTest Rol"
         }
-        
         const response = await requester.post('/users').send(mockUser)
         assert.strictEqual(response.status, 200);
         expect(response.ok).to.equal(true);
