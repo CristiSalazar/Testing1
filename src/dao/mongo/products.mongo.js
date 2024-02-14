@@ -17,6 +17,7 @@ export default class Products {
             return prodCreate
         }catch(error){
             console.error('Error al crear producto:', error);
+            return Error
         }      
     }
     updateProduct = async (prodId, prodData) => {
@@ -28,23 +29,38 @@ export default class Products {
 
         } catch (error) {
             console.error('Error al actualizar producto:', error);
+            return "Error al actualizar"
         }
     }
     deleteProduct = async (productId) => {
         try {
             if (!mongoose.Types.ObjectId.isValid(productId)) {
-                return 'ID de producto no válido';
+                return 'ID de producto inválido';
             }
-    
             let deletedProduct = await productsModel.deleteOne({ _id: new mongoose.Types.ObjectId(productId) });
-    
             if (deletedProduct.deletedCount > 0) {
                 return 'Producto eliminado exitosamente';
             } else {
-                return 'No se encontró un producto con el ID proporcionado';
+                return 'No se encontró producto con el ID proporcionado';
             }
         } catch (error) {
             console.error('Error al eliminar producto:', error);
+            return "Error eliminando producto"
         }
     };
+
+    getProductById = async (id) => { 
+        try 
+        {
+          const prod = await productsModel.findById(id).lean();    
+          if (!prod) 
+          {
+            return 'Usuario no encontrado';
+          }   
+          return prod;
+        } catch (error) {
+          console.error('Error al obtener el usuario:', error);
+          return 'Error obteniendo usuario';
+        }
+    }
 }

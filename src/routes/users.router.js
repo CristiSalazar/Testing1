@@ -2,7 +2,7 @@ import { Router } from "express";
 import UserDTO from "../dao/DTOs/user.dto.js";
 import { userService } from "../repositories/index.js";
 import Users from "../dao/mongo/users.mongo.js"
-import uploader from "../../utils.js"
+import {transport, uploader} from "../../utils.js"
 
 const router = Router()
 
@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
     } 
 })
 
-//p
+//premium
 router.post("/premium/:uid", async (req, res) => {
     try {
       const { rol } = req.body;
@@ -62,7 +62,33 @@ router.post("/premium/:uid", async (req, res) => {
     }
   });
 
-  const allFiles = [];
+  //Eliminar usuarios
+router.delete('/', async (req, res) => {
+    try {
+      const currentDate = new Date();
+      const limitDate = new Date(currentDate.getTime() - 2 * 24 * 60 * 60 * 1000);
+      const result = await usersMongo.deleteUsersByFilter({ last_connection: { $lt: limitDate } });
+      if(result.length > 0){
+        for (const userEmail of result) {
+        await transport.sendMail({
+          from: 'cristina.salazar125@gmail.com', 
+          to: userEmail,
+          subject: 'Eliminación cuenta',
+          text: 'Lo lamento, tu cuenta ha sido eliminada.'
+        });
+      }
+      res.status(200).json({ message: 'Usuarios eliminados con éxito.' });
+      }else{
+        res.status(500).json({ message: 'No se eliminaron usuarios' });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al eliminar usuarios.' });
+    }
+  });
+
+const allFiles = [];
+
 router.post("/:uid/documents", uploader.fields([
   { name: 'profiles', maxCount: 3 },    
   { name: 'products', maxCount: 3 },

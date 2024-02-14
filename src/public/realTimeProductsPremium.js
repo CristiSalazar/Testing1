@@ -7,6 +7,9 @@ document.getElementById('prod-form').addEventListener('submit', (e) => {
     const id = idInput.value;
     idInput.value = '';
 
+    const emailInput = document.getElementById('correoLogin');
+    const email = emailInput.value;
+
     const descInput = document.getElementById('desc');
     const description = descInput.value;
     descInput.value = '';
@@ -21,7 +24,6 @@ document.getElementById('prod-form').addEventListener('submit', (e) => {
 
     const quantityInput = document.getElementById('available');
     const quantity = quantityInput.value;
-    quantityInput.value = " ";
 
     const ownerInput = document.getElementById('owner');
     const owner = ownerInput.value;
@@ -32,7 +34,7 @@ document.getElementById('prod-form').addEventListener('submit', (e) => {
     const eliminarProducto = eliminarProductoCheckbox.checked;
 
     if (eliminarProducto) {
-        socket.emit("delProd", { id: id });
+        socket.emit("delProdPremium", { id: id, owner: owner, email: email });
     }else{
         const newProduct = {
             description: description,
@@ -49,5 +51,3 @@ document.getElementById('prod-form').addEventListener('submit', (e) => {
         }
     }
 });
-
- 

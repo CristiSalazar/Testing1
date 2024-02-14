@@ -43,6 +43,8 @@ app.get("/", function(req,res){
 
 const users = new UserMongo()
 const products = new ProdMongo()
+const carts = new CartMongo()
+const tickets = new TicketMongo()
 
 const swaggerOptions = {
     definition:{
@@ -122,6 +124,11 @@ socketServer.on("connection", socket => {
             socketServer.emit("errorUserPremium", "Producto no fue agregado");
         }
     })
+
+    socket.on("delUser", (id) => {
+        users.deleteUser(id)
+        socketServer.emit("success", "Usuario Eliminado Correctamente");
+    });
 
     socket.on("updProd", ({id, newProduct}) => {
         products.updateProduct(id, newProduct)

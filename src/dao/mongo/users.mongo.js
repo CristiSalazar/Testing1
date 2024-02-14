@@ -26,7 +26,7 @@ export default class Users {
         }   
         return user;
       } catch (error) {
-        console.error('Error al obtener el usuario:', error);
+        console.error('Error al obtener usuario:', error);
         return null
       }
     }
@@ -95,6 +95,17 @@ export default class Users {
           throw error;
         }
       }; 
+
+      deleteUser = async (userId) => {
+        try {
+            const idToDelete = typeof userId === 'object' ? userId.id : userId;
+            let deletedUser = await usersModel.deleteOne({ _id: idToDelete });
+            return deletedUser;
+        } catch (error) {
+            console.error('Error eliminando usuario:', error);
+            return 'Error eliminando';
+        }
+      };
     
     updateDocuments = async (userId, newDocuments) => {
         try {
@@ -110,30 +121,29 @@ export default class Users {
           const updatedUser = await user.save();
           return updatedUser;
         } catch (error) {
-          console.error('Error al actualizar los documentos:', error);
+          console.error('Error actualizando los documentos:', error);
           throw error;
         }
       };
 
-      hasRequiredDocuments = async (userId) => {
+      hasDocuments = async (userId) => {
         try {
           const user = await usersModel.findById(userId);
           if (!user || !Array.isArray(user.documents)) {
             return false; 
           }
 
-          //revisar
-          const requiredDocumentNames = ['identificacion', 'comprobante_domicilio', 'comprobante_estado_cuenta'];
+          const documentNames = ['identificacion', 'comprobante_domicilio', 'comprobante_estado_cuenta'];
       
-          for (const requiredDocumentName of requiredDocumentNames) {
-            const hasDocument = user.documents.some(doc => doc.name === requiredDocumentName);
+          for (const documentName of documentNames) {
+            const hasDocument = user.documents.some(doc => doc.name === documentName);
             if (!hasDocument) {
               return false; 
             }
           }
           return true; 
         } catch (error) {
-          console.error('Error al verificar los documentos:', error);
+          console.error('Error verificando los documentos:', error);
           throw error;
         }
       };

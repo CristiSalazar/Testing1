@@ -9,26 +9,44 @@ const router = Router()
 const cartMongo = new Carts()
 
 router.get("/", async (req, res) => {
-    let result = await cartMongo.get()
-    res.send({ status: "success", payload: result })
+    try
+    {
+        req.logger.info('Se obtienen carritos');
+        let result = await cartMongo.get()
+        res.status(200).send({ status: "success", payload: result });
+    }
+    catch(error)
+    {
+        req.logger.info('Error al obtener carritos');
+        res.status(500).send({ status: "error", message: "Error servidor" });
+    } 
 })
 
 router.post("/", async (req, res) => {
-    let { products } = req.body
-    const correo = req.body.correo;
-    let rolUser = userService.getRolUser(products.owner)
-    if(rolUser == 'premium' && correo == products.owner)
+    try
     {
-        console.log("No es posible agregar")
-    }else{
-        let cart = new CartDTO({ products })
-        let result = await cartService.createCart(cart)
+        let { products } = req.body
+        const correo = req.body.email;
+        let rolUser = userService.getRolUser(products.owner)
+        if(rolUser == 'premium' && correo == products.owner)
+        {
+            req.logger.error('Error');
+            res.status(500).send({ status: "error", message: "Error" });
+        }else{
+            let cart = new CartDTO({ products })
+            let result = await cartService.createCart(cart)
+            if(result){
+                req.logger.info('Carrito creado de forma correcta');
+                res.status(200).send({ status: "success", payload: result });
+            }else{
+                req.logger.error("Error creando carrito");
+                res.status(500).send({ status: "error", message: "Error interno del servidor" });
+            }
+        }
     }
-    
-    if(result){
-        req.logger.info('Carrito creado correctamente');
-    }else{
-        req.logger.error("Error al crear carrito");
+    catch(error)
+    {
+        res.status(500).send({ status: "error", message: "Error interno del servidor" });
     }
 })
 
@@ -54,6 +72,7 @@ router.post("/:cid/purchase", async (req, res) => {
         }
     } catch (error) {
         req.logger.error("Error:" + error.message);
+        return res.status(500).json({ error: "Error" });
     }
 })
 

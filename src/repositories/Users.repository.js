@@ -1,5 +1,3 @@
-// Finalizado
-
 import UserDTO from "../dao/DTOs/user.dto.js";
 
 export default class UserRepository {

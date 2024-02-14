@@ -84,4 +84,39 @@ export default class Carts {
         console.log("Carro creado correctamente")
         return result
     }
+    addToCart = async (cartId, productId, quantity) => {
+        try {
+            const cartObjectId = new mongoose.Types.ObjectId(cartId)
+            let cart = await cartsModel.findById(cartObjectId)           
+            const alreadyProduct = cart.products.find(product => product.productId.equals(productId));
+            if (alreadyProduct) {
+                alreadyProduct.quantity += quantity;
+            } else {
+                cart.products.push({
+                    productId: productId,
+                    quantity: quantity,
+                });
+            }
+            await cart.save();
+            console.log("Producto agregado de forma correcta");
+            return cart;
+        } catch (error) {
+            console.error('Error al agregar producto', error);
+            throw new Error('Error al agregar producto');
+        }
+    };
+    getCartAndProducts = async (cartId) =>
+      {
+        try
+        {
+          const cart = await cartsModel.findById(cartId).populate('products.productId').lean();
+          if (!cart) {
+            return 'No se encontró carrito';
+          }
+          return cart;
+        } catch (error) {
+          console.error('Error al obtener productos del carrito:', error);
+          return 'Error al obtener productos del carrito';
+        }
+      }     
 }

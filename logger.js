@@ -1,5 +1,3 @@
-// listo
-
 import winston from "winston"
 
 const devLogger = winston.createLogger({

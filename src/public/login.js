@@ -20,6 +20,9 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
       } else if (data.token && data.user.rol === 'usuario') {
           window.location.href = '/current';
       }
+      else if (data.token && data.user.rol === 'premium') {
+          window.location.href = `/current-plus?token=${encodeURIComponent(data.token)}`;
+      }
     } else {
       console.error("Error en el inicio de sesión");
     }
@@ -27,7 +30,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
 document.addEventListener("DOMContentLoaded", function () {
   const forgotPasswordButton = document.getElementById("forgotPasswordButton");
-  const lblRecuperacion = document.getElementById("lblRecuperacion");
+  const lblRecuperation = document.getElementById("lblRecuperacion");
   forgotPasswordButton.addEventListener("click", async function (event) {
       event.preventDefault();
       const email = document.getElementById("email").value;
@@ -41,11 +44,10 @@ document.addEventListener("DOMContentLoaded", function () {
       });
       if (responsePass.ok) {
         const result = await responsePass.text();
-        lblRecuperacion.textContent = result; 
+        lblRecuperation.textContent = result; 
       } else {
         const result = await responsePass.text();
-        lblRecuperacion.textContent = result; 
+        lblRecuperation.textContent = result; 
       } 
-
   });
 });

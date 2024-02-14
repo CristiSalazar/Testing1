@@ -1,5 +1,3 @@
-// Finalizado
-
 import mongoose from "mongoose";
 import config from '../config/config.js'
 export let Carts
