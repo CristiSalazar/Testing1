@@ -1,5 +1,5 @@
-import cartsModel from './models/carts.model'
-import productsModel from './models/products.model'
+import cartsModel from './models/carts.model.js'
+import productsModel from './models/products.model.js'
 import mongoose from 'mongoose'
 
 export default class Carts {

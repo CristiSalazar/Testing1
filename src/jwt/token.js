@@ -31,7 +31,7 @@ export function emailFromToken(token) {
   }
 }
 
-export function TokenResetPass(token) {
+export function tokenResetPass(token) {
   try {
     const result = jwt.verify(token, 'secreto');
     return result;

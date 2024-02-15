@@ -1,8 +1,11 @@
 import express from 'express'
+import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import config from './src/config/config.js'
 import passport from "passport"
 import cookieParser from "cookie-parser"
+import CartMongo from "./src/dao/mongo/carts.mongo.js"
+import TicketMongo from "./src/dao/mongo/tickets.mongo.js"
 import cartsRouter from './src/routes/carts.router.js'
 import productsRouter from './src/routes/products.router.js'
 import usersRouter from './src/routes/users.router.js'
@@ -14,7 +17,7 @@ import { ExtractJwt as ExtractJwt } from 'passport-jwt';
 import __dirname, { authorization, passportCall, transport, createHash } from "./utils.js"
 import initializePassport from "./src/config/passport.config.js"
 import * as path from "path"
-import {generateAndSetToken, generateAndSetTokenEmail, validateTokenResetPass, getEmailFromToken, getEmailFromTokenLogin} from "./src/jwt/token.js"
+import {setToken, setTokenEmail, tokenResetPass, emailFromToken, emailFromTokenLogin} from "./src/jwt/token.js"
 import UserDTO from './src/dao/DTOs/user.dto.js'
 import { engine } from "express-handlebars"
 import {Server} from "socket.io"
@@ -27,6 +30,13 @@ import swaggerUiExpress from 'swagger-ui-express'
  
 const app = express()
 const port = process.env.PORT || 8080
+
+const users = new UserMongo()
+const products = new ProdMongo()
+const carts = new CartMongo()
+const tickets = new TicketMongo()
+
+mongoose.connect(process.env.MONGO_URL);
 
 //logger
 app.use(loggerMiddleware)
@@ -41,10 +51,7 @@ app.get("/", function(req,res){
     res.send("logs realizados")
 })
 
-const users = new UserMongo()
-const products = new ProdMongo()
-const carts = new CartMongo()
-const tickets = new TicketMongo()
+
 
 const swaggerOptions = {
     definition:{
@@ -62,11 +69,7 @@ const swaggerOptions = {
 const specs = swaggerJSDoc(swaggerOptions)
 app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
-mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
-
+ 
 //listo
 const jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -190,7 +193,7 @@ app.post("/login", async (req, res) => {
             req.logger.error("Error de autenticación: Contraseña incorrecta");
             return res.status(401).json({ message: "Error de autenticación" });
         }
-        const token = generateAndSetToken(res, email, password); 
+        const token = setToken(res, email, password); 
         const userDTO = new UserDTO(user);
         const prodAll = await products.get();
         res.json({ token, user: userDTO, prodAll });
@@ -221,7 +224,7 @@ app.post("/api/register", async(req,res)=>{
     }
     try {
         users.addUser(newUser);
-        const token = generateAndSetToken(res, email, password);
+        const token = setToken(res, email, password);
         res.send({ token });
 
         req.logger.info("Registro exitoso: " + emailToFind);
@@ -253,7 +256,7 @@ app.get('/current-plus',passportCall('jwt', { session: false }), authorization('
     req.logger.info("Se inicia página de Usuario Premium")
     authorization('user')(req, res,async() => {  
         const { token} = req.query
-        const emailToken = getEmailFromTokenLogin(token) 
+        const emailToken = emailFromTokenLogin(token) 
         const prodAll = await products.get()
         res.render('home-plus', { products: prodAll, email: emailToken })
     });
@@ -278,7 +281,7 @@ app.post('/forgot-password', async (req, res) => {
       return res.status(401).json({ message: "Error al reestablecer contraseña" });
     }
 
-    const token = generateAndSetTokenEmail(email)
+    const token = setTokenEmail(email)
  
     const resetLink = `http://localhost:8080/reset-password?token=${token}`;
   
@@ -305,8 +308,8 @@ app.post('/forgot-password', async (req, res) => {
 
   app.get('/reset-password', async (req, res) => {
     const {token} = req.query;
-    const validate = validateTokenResetPass(token)
-    const emailToken = getEmailFromToken(token)
+    const validate = tokenResetPass(token)
+    const emailToken = emailFromToken(token)
     if(validate){
         res.render('resetPassword', { token , email: emailToken});
     }
