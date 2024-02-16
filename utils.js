@@ -40,8 +40,7 @@ export const transport= nodemailer.createTransport({
 })
 
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -72,6 +71,7 @@ const storage = multer.diskStorage({
   });
   export const uploader = multer({ storage: storage });
   
-
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export default __dirname

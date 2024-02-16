@@ -41,18 +41,6 @@ mongoose.connect(process.env.MONGO_URL);
 //logger
 app.use(loggerMiddleware)
 
-app.get("/", function(req,res){
-    req.logger.fatal("mensaje de fatal")
-    req.logger.error("mensaje de error")
-    req.logger.warn("Mensaje de warn");
-    req.logger.info("mensaje de info")
-    req.logger.http("Mensaje de http")
-    req.logger.debug("Mensaje de debug")
-    res.send("logs realizados")
-})
-
-
-
 const swaggerOptions = {
     definition:{
         openapi:'3.0.1',
@@ -89,16 +77,12 @@ passport.use(
 
 //middlewares
 app.use(express.json())
-
-
+app.use(express.static(path.join(__dirname, 'public')))
 app.engine("handlebars", engine())
 app.set("view engine", "handlebars")
 app.set("views", path.resolve(__dirname + "/views"))
-app.use(express.static(path.join(__dirname, 'public')))
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(cookieParser())
 app.use(compression())
 initializePassport()
@@ -238,6 +222,7 @@ app.get('/', (req, res) => {
     req.logger.info("Inicio de Login");
     res.sendFile('index.html', { root: app.get('views') });
 })
+
 
 app.get('/register', (req, res) => {
     req.logger.info("Página de Registro de Usuarios");
