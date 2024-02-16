@@ -198,19 +198,20 @@ app.post("/api/register", async(req,res)=>{
         return res.send({ status: "error", error: "Usuario ya existe" })
     }
 
+    let resultNewCart = await carts.addCart()
     const newUser = {
         first_name,
         last_name,
         email,
         age,
         password: createHash(password),
+        id_cart: resultNewCart._id.toString(),
         rol
     }
     try {
         users.addUser(newUser);
         const token = setToken(res, email, password);
         res.send({ token });
-
         req.logger.info("Registro exitoso: " + emailToFind);
     } catch (error) {
         req.logger.error("Error al registrar al usuario: " + error.message)
